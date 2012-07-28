@@ -10,7 +10,7 @@ object Builds extends sbt.Build {
   lazy val root = Project(
     "dispatch-all", file("."), settings = Defaults.defaultSettings ++ Seq(
       ls.Plugin.LsKeys.skipWrite := true
-    )).delegateTo(setup).aggregate(core)
+    )).delegateTo(setup).aggregate(core, tagsoup)
 
   def module(name: String) =
     Project(name, file(name))
@@ -18,6 +18,8 @@ object Builds extends sbt.Build {
       .dependsOn(ufcheck % "test->test")
 
   lazy val core = module("core")
+
+  lazy val tagsoup = module("tagsoup").dependsOn(core)
 
   /** Util module for using unfiltered with scalacheck */
   lazy val ufcheck = Project(
