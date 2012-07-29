@@ -8,7 +8,36 @@ object PromiseEither {
     def delegate = underlying
   }
 
-  class LeftProjection[+A,+B](underlying: Promise[Either[A,B]]) {
+  /* Trying to introduce type signatures representing what is required
+   * of the projections. --league
+   */
+  trait LP[+A,+B] {
+    def map[X](f: A => X): Promise[Either[X,B]]
+  }
+
+  trait RP[+A,+B] {
+    def flatMap[AA >: A,Y](f: B => Promise[Either[AA,Y]]):
+      Promise[Either[AA,Y]]
+    def map[Y](f: B => Y): Promise[Either[A,Y]]
+    def foreach(f: B => Unit)
+    def values[A1 >: A,C](implicit ev: RP[A, B] <:< RP[A1, Iterable[C]]):
+      RIVS[A1,C]
+  }
+
+  trait RIVS[E,A] {
+    def flatMap[B](f: A => Promise[Either[E,B]]): Promise[Either[E,Iterable[B]]]
+    def map[B](f: A => B): Promise[Either[E,Iterable[B]]]
+    def foreach(f: A => Unit)
+  }
+
+  def leftProjection[A,B](underlying: Promise[Either[A,B]]): LP[A,B] =
+    new LeftProjection(underlying)
+
+  def rightProjection[A,B](underlying: Promise[Either[A,B]]): RP[A,B] =
+    new RightProjection(underlying)
+
+  private class LeftProjection[+A,+B](underlying: Promise[Either[A,B]])
+  extends LP[A,B] {
     def flatMap[BB >: B,X](f: A => Promise[Either[X,BB]]) =
       new EitherDelegate(underlying) with Promise[Either[X,BB]] {
         def claim = underlying().left.flatMap { a => f(a)() }
@@ -21,7 +50,8 @@ object PromiseEither {
       underlying.addListener { () => underlying().left.foreach(f) }
     }
   }
-  class RightProjection[+A,+B](underlying: Promise[Either[A,B]]) {
+  private class RightProjection[+A,+B](underlying: Promise[Either[A,B]])
+  extends RP[A,B] {
     def flatMap[AA >: A,Y](f: B => Promise[Either[AA,Y]]) =
       new EitherDelegate(underlying) with Promise[Either[AA,Y]] {
         def claim = underlying().right.flatMap { b => f(b)() }
@@ -34,8 +64,7 @@ object PromiseEither {
       underlying.addListener { () => underlying().right.foreach(f) }
     }
     def values[A1 >: A, C]
-    (implicit ev: RightProjection[A, B] <:<
-                  RightProjection[A1, Iterable[C]]) =
+    (implicit ev: RP[A, B] <:< RP[A1, Iterable[C]]) =
       new PromiseRightIterable.Values(this)
   }
 
@@ -76,8 +105,8 @@ object PromiseIterable {
 }
 
 object PromiseRightIterable {
-  import PromiseEither.RightProjection
-  type RightIter[E,A] = RightProjection[E,Iterable[A]]
+  import PromiseEither.{RP,RIVS}
+  type RightIter[E,A] = RP[E,Iterable[A]]
 
   private def flatRight[L,R](eithers: Iterable[Either[L,R]]) = {
     val start: Either[L,Seq[R]] = Right(Seq.empty)
@@ -107,7 +136,7 @@ object PromiseRightIterable {
       new Values(underlying.map { _.filter(p) }.right)
     def filter(p: A => Boolean) = withFilter(p)
   }
-  class Values[E,A](underlying: RightIter[E,A]) {
+  class Values[E,A](underlying: RightIter[E,A]) extends RIVS[E,A] {
     def flatMap[B](f: A => Promise[Either[E,B]]) =
       underlying.flatMap { iter =>
         Promise.all(iter.map(f)).map(flatRight)
