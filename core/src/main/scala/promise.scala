@@ -95,10 +95,10 @@ trait Promise[+A] extends PromiseSIP[A] { self =>
     }
 
   def left[B,C](implicit ev: Promise[A] <:< Promise[Either[B, C]]) =
-    PromiseEither.leftProjection(this)
+    new PromiseEither.LeftProjection(this)
 
   def right[B,C](implicit ev: Promise[A] <:< Promise[Either[B, C]]) =
-    PromiseEither.rightProjection(this)
+    new PromiseEither.RightProjection(this)
 
   /** Facilitates projection over promised iterables */
   def values[B](implicit ev: Promise[A] <:< Promise[Iterable[B]]) =
