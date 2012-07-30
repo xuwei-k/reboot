@@ -19,7 +19,7 @@ object PromiseEither {
     def flatMap[AA >: A,Y](f: B => Promise[Either[AA,Y]]):
       Promise[Either[AA,Y]]
     def map[Y](f: B => Y): Promise[Either[A,Y]]
-    def foreach(f: B => Unit)
+    def foreach[U](f: B => U)
     def values[A1 >: A,C](implicit ev: RP[A, B] <:< RP[A1, Iterable[C]]):
       RIVS[A1,C]
   }
@@ -27,7 +27,7 @@ object PromiseEither {
   trait RIVS[E,A] {
     def flatMap[B](f: A => Promise[Either[E,B]]): Promise[Either[E,Iterable[B]]]
     def map[B](f: A => B): Promise[Either[E,Iterable[B]]]
-    def foreach(f: A => Unit)
+    def foreach[U](f: A => U)
   }
 
   def leftProjection[A,B](underlying: Promise[Either[A,B]]): LP[A,B] =
@@ -60,7 +60,7 @@ object PromiseEither {
       new EitherDelegate(underlying) with Promise[Either[A,Y]] {
         def claim = underlying().right.map(f)
       }
-    def foreach(f: B => Unit) {
+    def foreach[U](f: B => U) {
       underlying.addListener { () => underlying().right.foreach(f) }
     }
     def values[A1 >: A, C]
@@ -80,7 +80,7 @@ object PromiseIterable {
     def map[Iter[B] <: Iterable[B], B](f: A => Iter[B])
     : Promise[Iterable[B]] =
       underlying.map { _.map(f) }.map { _.flatten }
-    def foreach(f: A => Unit) {
+    def foreach[U](f: A => U) {
       underlying.foreach { _.foreach(f) }
     }
     def withFilter(p: A => Boolean) =
@@ -94,7 +94,7 @@ object PromiseIterable {
       }
     def map[B](f: A => B): Promise[Iterable[B]] =
       underlying.map { _.map(f) }
-    def foreach(f: A => Unit) {
+    def foreach[U](f: A => U) {
       underlying.foreach { _.foreach(f) }
     }
     def withFilter(p: A => Boolean) =
@@ -129,7 +129,7 @@ object PromiseRightIterable {
       underlying.flatMap { iter =>
         Promise(Right(iter.map(f).flatten))
       }
-    def foreach(f: A => Unit) {
+    def foreach[U](f: A => U) {
       underlying.foreach { _.foreach(f) }
     }
     def withFilter(p: A => Boolean) =
@@ -145,7 +145,7 @@ object PromiseRightIterable {
       underlying.flatMap { iter =>
         Promise(Right(iter.map(f)))
     }
-    def foreach(f: A => Unit) {
+    def foreach[U](f: A => U) {
       underlying.foreach { _.foreach(f) }
     }
     def flatten = new Flatten(underlying)
