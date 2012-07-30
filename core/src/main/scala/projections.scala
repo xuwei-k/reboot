@@ -3,10 +3,6 @@ package dispatch
 // handy projections
 
 object PromiseEither {
-  class EitherDelegate[+A,+B](underlying: Promise[Either[A,B]])
-  extends DelegatePromise[Either[A,B]] {
-    def delegate = underlying
-  }
 
   type EitherSwap[+A,+B] = Either[B,A]
 
@@ -138,11 +134,3 @@ object PromiseRightIterable {
     def filter(p: A => Boolean) = withFilter(p)
   }
 }
-
-/*
-
-: Promise[EitherSwap[Iterable[A],E]]
-: Promise[RightProjection[E,Iterable[A]]]
-
-
-*/
