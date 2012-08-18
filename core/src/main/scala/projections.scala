@@ -6,7 +6,7 @@ object PromiseEither {
 
   type EitherSwap[+A,+B] = Either[B,A]
 
-  type IterableProjection[+A,+B,E[+_,+_]] = {
+  type Mappable[+A,+B,E[+_,+_]] = {
     def foreach[U](f: A => U): Any
     def map[X](f: A => X): E[X,B]
     def flatMap[BB >: B, X](f: A => E[X,BB]): E[X,BB]
@@ -14,7 +14,7 @@ object PromiseEither {
 
   trait GenericProjection[+A,+B,E[+_,+_]] {
     protected def underlying: Promise[E[A,B]]
-    protected def project: IterableProjection[A,B,E]
+    protected def project: Mappable[A,B,E]
     private class Delegate extends DelegatePromise[E[A,B]] {
       def delegate = underlying
     }
