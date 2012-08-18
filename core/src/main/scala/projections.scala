@@ -3,42 +3,54 @@ package dispatch
 // handy projections
 
 object PromiseEither {
-  class EitherDelegate[+A,+B](underlying: Promise[Either[A,B]])
-  extends DelegatePromise[Either[A,B]] {
-    def delegate = underlying
+
+  type EitherSwap[+A,+B] = Either[B,A]
+
+  type IterableProjection[+A,+B,E[+_,+_]] = {
+    def foreach[U](f: A => U): Any
+    def map[X](f: A => X): E[X,B]
+    def flatMap[BB >: B, X](f: A => E[X,BB]): E[X,BB]
   }
 
-  class LeftProjection[+A,+B](underlying: Promise[Either[A,B]]) {
-    def flatMap[BB >: B,X](f: A => Promise[Either[X,BB]]) =
-      new EitherDelegate(underlying) with Promise[Either[X,BB]] {
-        def claim = underlying().left.flatMap { a => f(a)() }
-      }
-    def map[X](f: A => X) =
-      new EitherDelegate(underlying) with Promise[Either[X,B]] {
-        def claim = underlying().left.map(f)
-      }
-    def foreach[U](f: A => U) {
-      underlying.addListener { () => underlying().left.foreach(f) }
+  trait GenericProjection[+A,+B,E[+_,+_]] {
+    protected def underlying: Promise[E[A,B]]
+    protected def project: IterableProjection[A,B,E]
+    private class Delegate extends DelegatePromise[E[A,B]] {
+      def delegate = underlying
     }
+    def map[X](f: A => X): Promise[E[X,B]] =
+      new Delegate with Promise[E[X,B]] {
+        def claim = project.map(f)
+      }
+    def flatMap[BB>:B,X](f: A => Promise[E[X,BB]]): Promise[E[X,BB]] =
+      new Delegate with Promise[E[X,BB]] {
+        def claim = project.flatMap { a => f(a)() }
+      }
+    def foreach[U](f: A => U): Any =
+      underlying.addListener { () =>
+        project.foreach(f)
+      }
   }
-  class RightProjection[+A,+B](underlying: Promise[Either[A,B]]) {
-    def flatMap[AA >: A,Y](f: B => Promise[Either[AA,Y]]) =
-      new EitherDelegate(underlying) with Promise[Either[AA,Y]] {
-        def claim = underlying().right.flatMap { b => f(b)() }
-      }
-    def map[Y](f: B => Y) =
-      new EitherDelegate(underlying) with Promise[Either[A,Y]] {
-        def claim = underlying().right.map(f)
-      }
-    def foreach(f: B => Unit) {
-      underlying.addListener { () => underlying().right.foreach(f) }
-    }
+
+  class LeftProjection[+A,+B](val underlying: Promise[Either[A,B]])
+  extends GenericProjection[A,B,Either] {
+    def project = underlying().left
+  }
+
+  class RightProjection[+A,+B](val underlying: Promise[Either[A,B]])
+  extends GenericProjection[B,A,EitherSwap] {
+    def project = underlying().right
     def values[A1 >: A, C]
-    (implicit ev: RightProjection[A, B] <:<
-                  RightProjection[A1, Iterable[C]]) =
-      new PromiseRightIterable.Values(this)
+      (implicit ev: RightProjection[A, B] <:< RightProjection[A1, Iterable[C]]): RIVS[A1,C] =
+      new PromiseRightIterable.Values[A1,C](this)
   }
 
+  /* More progress can be made on iterables, one hopes. --league */
+  trait RIVS[E,A] {
+    def flatMap[B](f: A => Promise[Either[E,B]]): Promise[Either[E,Iterable[B]]]
+    def map[B](f: A => B): Promise[Either[E,Iterable[B]]]
+    def foreach[U](f: A => U): Any
+  }
 }
 
 object PromiseIterable {
@@ -51,9 +63,8 @@ object PromiseIterable {
     def map[Iter[B] <: Iterable[B], B](f: A => Iter[B])
     : Promise[Iterable[B]] =
       underlying.map { _.map(f) }.map { _.flatten }
-    def foreach(f: A => Unit) {
+    def foreach[U](f: A => U): Any =
       underlying.foreach { _.foreach(f) }
-    }
     def withFilter(p: A => Boolean) =
       new Flatten(underlying.map { _.filter(p) })
     def filter(p: A => Boolean) = withFilter(p)
@@ -65,9 +76,8 @@ object PromiseIterable {
       }
     def map[B](f: A => B): Promise[Iterable[B]] =
       underlying.map { _.map(f) }
-    def foreach(f: A => Unit) {
+    def foreach[U](f: A => U): Any =
       underlying.foreach { _.foreach(f) }
-    }
     def withFilter(p: A => Boolean) =
       new Values(underlying.map { _.filter(p) })
     def filter(p: A => Boolean) = withFilter(p)
@@ -76,7 +86,7 @@ object PromiseIterable {
 }
 
 object PromiseRightIterable {
-  import PromiseEither.RightProjection
+  import PromiseEither.{RightProjection,RIVS}
   type RightIter[E,A] = RightProjection[E,Iterable[A]]
 
   private def flatRight[L,R](eithers: Iterable[Either[L,R]]) = {
@@ -100,14 +110,13 @@ object PromiseRightIterable {
       underlying.flatMap { iter =>
         Promise(Right(iter.map(f).flatten))
       }
-    def foreach(f: A => Unit) {
+    def foreach[U](f: A => U): Any =
       underlying.foreach { _.foreach(f) }
-    }
     def withFilter(p: A => Boolean) =
-      new Values(underlying.map { _.filter(p) }.right)
+      new Values[E,A](underlying.map { _.filter(p) }.right)
     def filter(p: A => Boolean) = withFilter(p)
   }
-  class Values[E,A](underlying: RightIter[E,A]) {
+  class Values[E,A](underlying: RightIter[E,A]) extends RIVS[E,A] {
     def flatMap[B](f: A => Promise[Either[E,B]]) =
       underlying.flatMap { iter =>
         Promise.all(iter.map(f)).map(flatRight)
@@ -116,12 +125,12 @@ object PromiseRightIterable {
       underlying.flatMap { iter =>
         Promise(Right(iter.map(f)))
     }
-    def foreach(f: A => Unit) {
+    def foreach[U](f: A => U): Any =
       underlying.foreach { _.foreach(f) }
-    }
     def flatten = new Flatten(underlying)
-    def withFilter(p: A => Boolean) =
-      new Values(underlying.map { _.filter(p) }.right)
+    def withFilter(p: A => Boolean) = {
+      new Values[E,A](underlying.map { _.filter(p) }.right)
+    }
     def filter(p: A => Boolean) = withFilter(p)
   }
 }
