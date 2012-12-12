@@ -1,5 +1,6 @@
 import com.ning.http.client.{AsyncHttpClient, AsyncHandler, Request}
 
+/** This will hold all the explicits **/
 package object dispatch {
 
   /** Type alias for RequestBuilder, our typical request definitions */
@@ -8,10 +9,9 @@ package object dispatch {
   type Res = com.ning.http.client.Response
   /** Type alias for URI, avoid need to import */
   type Uri = java.net.URI
+
   /** type alias for dispatch future/ scala future **/
   type Future[+A] = dispatch.DispatchFuture[A]
-
-
 
   @deprecated("Use dispatch.HttpExecutor")
   type Executor = HttpExecutor
@@ -30,6 +30,7 @@ package object dispatch {
     _.millis
   }
 
+  /** This method turns a request into a Future **/
   def requestHandlerToFuture[T](request: Request, handler: AsyncHandler[T], http: HttpExecutor): Future[T] =
     new ListenableFuturePromise(
       http.client.executeRequest(request, handler),
