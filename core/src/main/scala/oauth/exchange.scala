@@ -1,5 +1,5 @@
 package dispatch.oauth
-
+/*
 import dispatch._
 
 import com.ning.http.client.oauth._
@@ -36,11 +36,11 @@ trait Exchange {
     com.ning.http.util.Base64.encode(nonceBuffer)
   }
 
-  def message[A](promised: Promise[A], ctx: String) =
+  def message[A](promised: Future[A], ctx: String) =
     for (exc <- promised.either.left)
       yield "Unexpected problem fetching %s:\n%s".format(ctx, exc.getMessage)
 
-  def fetchRequestToken: Promise[Either[String,RequestToken]] = {
+  def fetchRequestToken: Future[Either[String,RequestToken]] = {
     val promised = http(
       url(requestToken) 
         << Map("oauth_callback" -> callback)
@@ -66,7 +66,7 @@ trait Exchange {
   }
 
   def fetchAccessToken(reqToken: RequestToken, verifier: String)
-  : Promise[Either[String,RequestToken]]  = {
+  : Future[Either[String,RequestToken]]  = {
     val promised = http(
       url(accessToken)
         << Map("oauth_verifier" -> verifier)
@@ -77,3 +77,4 @@ trait Exchange {
   }
 
 }
+*/

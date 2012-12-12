@@ -1,4 +1,4 @@
-Abstraction over promised information
+Abstraction over future information
 -------------------------------------
 
 Often, can you can the extend utility of promises with simple
@@ -15,14 +15,14 @@ about the input for major cities.
 ```scala
 import dispatch._
 def weatherSvc(loc: String) =
-  url("http://www.google.com/ig/api").addQueryParameter("weather", loc)
+  url("http://api.wunderground.com/api/%s/forecast/q/CA/%s.xml" format ("0fa9a69d7c9e2ae4", loc))
 ```
 
 With this method we can bind to a handler that prints out the response
 in the usual way:
 
 ```scala
-for (str <- Http(weatherSvc("New York, USA") OK as.String))
+for (str <- Http(weatherSvc("New_York") OK as.String))
   println(str)
 ```
 
@@ -53,7 +53,7 @@ can use our new method to print a nicely formatted response.
 
 ```scala
 def printer = new scala.xml.PrettyPrinter(90, 2)
-for (xml <- weatherXml("New York, USA"))
+for (xml <- weatherXml("New_York"))
   println(printer.format(xml))
 ```
 
@@ -64,9 +64,10 @@ element "temp_c" using the `\\\\` method of `xml.Elem`.
 ```scala
 def extractTemp(xml: scala.xml.Elem) = {
   val seq = for {
-    elem <- xml \\\\ "temp_c"
-    attr <- elem.attribute("data") 
-  } yield attr.toString.toInt
+    elem <- xml \\ "fahrenheit"
+  } yield {
+    elem.text.toString.toInt
+  }
   seq.head
 }
 ```
@@ -86,7 +87,7 @@ understood by the service:
 
 
 ```scala
-for (t <- temperature("New York, USA")) println(t)
+for (t <- temperature("New_York")) println(t)
 ```
 
 The information gathering is now fully abstracted without blocking,

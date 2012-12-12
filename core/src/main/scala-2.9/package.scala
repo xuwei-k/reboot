@@ -1,10 +1,17 @@
+import com.ning.http.client.{AsyncHttpClient, AsyncHandler, Request}
+
 package object dispatch {
+
   /** Type alias for RequestBuilder, our typical request definitions */
   type Req = com.ning.http.client.RequestBuilder
   /** Type alias for Response, avoid need to import */
   type Res = com.ning.http.client.Response
   /** Type alias for URI, avoid need to import */
   type Uri = java.net.URI
+  /** type alias for dispatch future/ scala future **/
+  type Future[+A] = dispatch.DispatchFuture[A]
+
+
 
   @deprecated("Use dispatch.HttpExecutor")
   type Executor = HttpExecutor
@@ -22,4 +29,11 @@ package object dispatch {
   implicit val durationOrdering = Ordering.by[Duration,Long] {
     _.millis
   }
+
+  def requestHandlerToFuture[T](request: Request, handler: AsyncHandler[T], http: HttpExecutor): Future[T] =
+    new ListenableFuturePromise(
+      http.client.executeRequest(request, handler),
+      http.promiseExecutor,
+      http
+    )
 }

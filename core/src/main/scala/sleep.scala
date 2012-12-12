@@ -1,5 +1,5 @@
 package dispatch
-
+/*
 import org.jboss.netty.util.{TimerTask, Timeout}
 
 import java.util.{concurrent => juc}
@@ -7,7 +7,7 @@ import java.util.{concurrent => juc}
 class SleepPromise[T](
   val http: HttpExecutor,
   d: Duration,
-  todo: => T) extends Promise[T] { self =>
+  todo: => T) extends Future[T] { self =>
   private lazy val latch = new juc.CountDownLatch(1)
   def claim = {
     latch.await()
@@ -36,3 +36,4 @@ class SleepPromise[T](
     }
   }
 }
+*/

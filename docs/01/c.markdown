@@ -11,9 +11,9 @@ a higher-level method to work with its promised values. First, we can
 work with Scala collections in familiar ways.
 
 ```scala
-val locs = List("New York, USA",
-                "Madrid, Spain",
-                "Seoul, Korea")
+val locs = List("New_York",
+                "Chicago",
+                "Dallas")
 val temps =
   for(loc <- locs)
     yield for (t <- temperature(loc))
@@ -29,7 +29,7 @@ temps.
 
 ```scala
 val hottest =
-  for (ts <- Promise.all(temps))
+  for (ts <- Futures.all(temps))
     yield ts.max
 ```
 

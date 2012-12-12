@@ -34,7 +34,7 @@ with DispatchCleanup {
     Gen.alphaStr.suchThat { _ != "foo"}
   ) { sample =>
     val res = Http(localhost / sample OK as.String).either.right.map {
-      _ => "error"
+      _: String => "error"
     }
     res() =? Left(StatusCode(404))
   }

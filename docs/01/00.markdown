@@ -1,49 +1,48 @@
 Bargaining with promises
 ------------------------
 
-Applying a promise is like taking a hostage. Your demands might be met
+Applying a future is like taking a hostage. Your demands might be met
 in time, but until they are you're sitting around doing nothing other
 than guarding a prisoner.
 
-So we don't like to take hostages or apply promises, but what good is
-a promise if you can't do anything with its value? Luckily, you can do
+So we don't like to take hostages or apply futures, but what good is
+a future if you can't do anything with its value? Luckily, you can do
 plenty. You just have to be flexible about when things happen.
 
 ### Transformations
 
-A promise is like an option that doesn't know what it is yet; that
-doesn't stop it from promising to transform into something else. We
-could transform an option of a string into an option of its
-length. Same goes for promises.
+A future is like an option that doesn't know what it is yet; think of it as a promise
+of having a value in the future. We could transform an option of a string into an
+option of its length. Same goes for futures.
 
 ```scala
 import dispatch._
-val svc = url("http://api.hostip.info/country.php")
-val country = Http(svc OK as.String)
-val length = for (c <- country) yield c.length
+val svc = url("http://httpbin.org/ip")
+val ip = Http(svc OK as.String)
+val length = for (c <- ip) yield c.length
 ```
 The `length` value is a promise of integer.
 
-### Promise#toString
+### Future#toString
 
 If you pasted the above into a console, you probably saw something
 like this in the output:
 
-    country: dispatch.Promise[String] = Promise(-incomplete-)
-    length: dispatch.Promise[Int] = Promise(2)
+    ip: dispatch.Future[String] = Future(-incomplete-)
+    length: dispatch.Future[Int] = Future(2)
 
-Both promises depend on the same network operation. By the time the
-second is evealuated by the console, its underlying value may or may
+Both futures depend on the same network operation. By the time the
+second is evaluated by the console, its underlying value may or may
 not be available.  But if you try a moment or two later, you'll see
-that both promises print their values.
+that both futures print their values.
 
     scala> country
-    res2: dispatch.Promise[String] = Promise(US)
+    res2: dispatch.Future[String] = Promise(US)
 
-`Promise.toString` represents promised values only if they are already
+`Future.toString` represents future values only if they are already
 available.
 
-### Promise#completeOption
+### Future#completeOption
 
 How does `toString` work on unknown values? It uses an option. You can
 use the same technique to access the integer value, *if it's

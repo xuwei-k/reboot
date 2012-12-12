@@ -18,8 +18,12 @@ with DispatchCleanup {
     object EchoHeader extends StringHeader("echo")
     netty.Http.anylocal.handler(netty.async.Planify {
       unfiltered.kit.AsyncCycle.perfect {
-        case req @ Path("/echo") & Params(Echo(echo)) =>
-          Http.promise(PlainTextContent ~> ResponseString(echo))
+        case req @ Path("/echo") & Params(Echo(echo)) => {
+
+         val promise: Future[unfiltered.response.ResponseFunction[org.jboss.netty.handler.codec.http.HttpResponse]]
+         = Http.promise(PlainTextContent ~> ResponseString(echo))
+          PimpedFuture(promise)
+        }
         case req @ Path("/ask") & Params(Echo(echo) & What(what)) =>
           for {
             e <- Http(
@@ -50,7 +54,7 @@ with DispatchCleanup {
 
   property("Server receieves same answer (from param) from itself") =
     forAll(Gen.alphaStr) { sample =>
-      val res: Promise[String] = Http(
+      val res: Future[String] = Http(
         localhost / "ask" << Map("what" -> "echo",
                                  "echo" -> sample) > as.String
       )

@@ -1,7 +1,7 @@
 version := "0.9.4-SNAPSHOT"
 
 crossScalaVersions :=
-  Seq("2.8.1", "2.8.2", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2")
+  Seq(/*"2.8.1", "2.8.2",*/ "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2","2.10.0-RC5")
 
 organization := "net.databinder.dispatch"
 

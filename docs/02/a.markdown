@@ -82,7 +82,7 @@ def hottest(locs: String*) = {
       yield for (tOpt <- temperature(loc))
         yield for (t <- tOpt)
           yield (t -> loc)
-  for (ts <- Promise.all(temps)) yield {
+  for (ts <- Futures.all(temps)) yield {
     val valid = ts.flatten
     for (_ <- valid.headOption)
       yield valid.max._2

@@ -1,8 +1,8 @@
 package dispatch
 
 import com.ning.http.client.{
-  AsyncHttpClient, RequestBuilder, Request, Response, AsyncHandler,
-  AsyncHttpClientConfig
+AsyncHttpClient, RequestBuilder, Request, Response, AsyncHandler,
+AsyncHttpClientConfig
 }
 import com.ning.http.client.providers.netty.NettyAsyncHttpProviderConfig
 import org.jboss.netty.util.{Timer,HashedWheelTimer}
@@ -10,11 +10,11 @@ import java.util.{concurrent => juc}
 
 /** Http executor with defaults */
 case class Http(
-  client: AsyncHttpClient = Defaults.client,
-  timeout: Duration = Defaults.timeout,
-  promiseExecutor: juc.Executor = Defaults.promiseExecutor,
-  timer: Timer = Defaults.timer
-) extends HttpExecutor {
+                 client: AsyncHttpClient = Defaults.client,
+                 timeout: Duration = Defaults.timeout,
+                 promiseExecutor: juc.Executor = Defaults.promiseExecutor,
+                 timer: Timer = Defaults.timer
+                 ) extends HttpExecutor {
   import AsyncHttpClientConfig.Builder
 
   /** Convenience method for an Executor with the given timeout */
@@ -36,7 +36,7 @@ case class Http(
 }
 
 /** Singleton default Http executor, can be used directly or altered
- *  with its case-class `copy` */
+  *  with its case-class `copy` */
 object Http extends Http(
   Defaults.client,
   Defaults.timeout,
@@ -49,10 +49,10 @@ private [dispatch] object Defaults {
   lazy val timeout = Duration.None
   lazy val config = new AsyncHttpClientConfig.Builder()
     .setAsyncHttpClientProviderConfig(
-      new NettyAsyncHttpProviderConfig().addProperty(
-        NettyAsyncHttpProviderConfig.BOSS_EXECUTOR_SERVICE, bossExecutor
-      )
-    ).setRequestTimeoutInMs(-1) // don't timeout streaming connections
+    new NettyAsyncHttpProviderConfig().addProperty(
+      NettyAsyncHttpProviderConfig.BOSS_EXECUTOR_SERVICE, bossExecutor
+    )
+  ).setRequestTimeoutInMs(-1) // don't timeout streaming connections
     .build
   lazy val bossExecutor =
     juc.Executors.newCachedThreadPool(DaemonThreads.factory)
@@ -60,6 +60,7 @@ private [dispatch] object Defaults {
   lazy val timer = new HashedWheelTimer(DaemonThreads.factory)
 }
 
+/** This handles turning requests and handlers into promises */
 trait HttpExecutor { self =>
   def promiseExecutor: juc.Executor
   def timer: Timer
@@ -67,20 +68,17 @@ trait HttpExecutor { self =>
   /** Timeout for promises made by this HTTP Executor */
   def timeout: Duration
 
-  def apply(builder: RequestBuilder): Promise[Response] =
+  def apply(builder: RequestBuilder): Future[Response] =
     apply(builder.build() -> new FunctionHandler(identity))
 
-  def apply[T](pair: (Request, AsyncHandler[T])): Promise[T] =
+  def apply[T](pair: (Request, AsyncHandler[T])): Future[T] =
     apply(pair._1, pair._2)
 
-  def apply[T](request: Request, handler: AsyncHandler[T]): Promise[T] =
-    new ListenableFuturePromise(
-      client.executeRequest(request, handler),
-      promiseExecutor,
-      this
-    )
+  def apply[T](request: Request, handler: AsyncHandler[T]): Future[T] =
+  requestHandlerToFuture(request, handler, this)
 
-  lazy val promise = new dispatch.Promise.Factory(self)
+
+  lazy val promise: dispatch.Futures.Factory = new dispatch.Futures.Factory(self)
 
   def shutdown() {
     client.close()
@@ -104,3 +102,4 @@ object DaemonThreads {
   def apply(threadPoolSize: Int) =
     juc.Executors.newFixedThreadPool(threadPoolSize, factory)
 }
+

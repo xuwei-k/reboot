@@ -1,5 +1,5 @@
 package dispatch.spec
-
+/*
 import org.scalacheck._
 
 object IterablePromiseSpecification
@@ -27,17 +27,17 @@ with DispatchCleanup {
 
   def localhost = host("127.0.0.1", server.port)
 
-  def split(str: String): Promise[Seq[String]] =
+  def split(str: String): Future[Seq[String]] =
     for (csv <- Http(localhost / "split" << Seq("str" -> str) > as.String))
       yield csv.split(",")
 
-  def value(str: String): Promise[Int] =
+  def value(str: String): Future[Int] =
     for (v <- Http(localhost / "value" << Seq("chr" -> str) > as.String))
       yield v.toInt
 
   property("iterable promise guarantor") = forAll(Gen.alphaStr) {
   (sample: String) =>
-    val values: Promise[Iterable[Int]] = for {
+    val values: Future[Iterable[Int]] = for {
       chrs <- split(sample)
       chr <- chrs
     } yield value(chr)
@@ -47,7 +47,7 @@ with DispatchCleanup {
   property("iterable promise values") = forAll(Gen.alphaStr) {
   (sampleL: String) =>
     val sample = sampleL.take(10) // n^2 concurrent requests
-    val values: Promise[Iterable[(Int,Int)]] = for {
+    val values: Future[Iterable[(Int,Int)]] = for {
       chr1 <- split(sample).values.flatten
       chr2 <- split(sample.reverse).values
       c1 <- value(chr1)
@@ -62,7 +62,7 @@ with DispatchCleanup {
   property("iterable promise values on either") = forAll(Gen.alphaStr) {
   (sampleL: String) =>
     val sample = sampleL.take(10) // n^2 concurrent requests
-    val values: Promise[Either[Throwable,Iterable[Int]]] = for {
+    val values: Future[Either[Throwable,Iterable[Int]]] = for {
       chr1 <- split(sample).either.right.values
       c1 <- value(chr1)
     } yield Right(c1)
@@ -72,3 +72,5 @@ with DispatchCleanup {
   }
 
 }
+*/
+

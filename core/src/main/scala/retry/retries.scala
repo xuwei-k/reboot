@@ -1,13 +1,13 @@
 package dispatch.retry
-
+/*
 import java.util.concurrent.TimeUnit
 
 import dispatch._
 
 /** Retry immediately after failure */
 object Directly extends CountingRetry {
-  def apply[T](max: Int = 3)(promise: Promise[T])
-              (implicit success: Success[T]): Promise[T] = {
+  def apply[T](max: Int = 3)(promise: Future[T])
+              (implicit success: Success[T]): Future[T] = {
     retry(max, promise, success, Directly(_)(promise.replay))
   }
 }
@@ -16,8 +16,8 @@ object Directly extends CountingRetry {
 object Pause extends CountingRetry {
   def apply[T](max: Int = 4,
                delay: Duration = Duration(500, TimeUnit.MILLISECONDS))
-              (promise: Promise[T])
-              (implicit success: Success[T]): Promise[T] = {
+              (promise: Future[T])
+              (implicit success: Success[T]): Future[T] = {
     retry(max,
           promise,
           success,
@@ -32,8 +32,8 @@ object Backoff extends CountingRetry {
   def apply[T](max: Int = 8,
                delay: Duration = Duration(500, TimeUnit.MILLISECONDS),
                base: Int = 2)
-              (promise: Promise[T])
-              (implicit success: Success[T]): Promise[T] = {
+              (promise: Future[T])
+              (implicit success: Success[T]): Future[T] = {
     retry(max,
           promise,
           success,
@@ -56,12 +56,13 @@ object Success {
 
 trait CountingRetry {
   protected def retry[T](max: Int,
-                         promise: Promise[T],
+                         promise: Future[T],
                          success: Success[T],
-                         orElse: Int => Promise[T]
+                         orElse: Int => Future[T]
                        ) =
     promise.flatMap { res =>
       if (max < 1 || success.predicate(res)) promise
       else orElse(max - 1)
     }
 }
+*/

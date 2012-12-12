@@ -20,8 +20,8 @@ First, we'll assign some promised temperatures using the methods
 defined on the last page.
 
 ```scala
-val newyork = temperature("New York, USA")
-val madrid = temperature("Madrid, Spain")
+val newyork = temperature("New_York")
+val chicago = temperature("Chicago")
 ```
 
 Dispatch is already working to fulfill both promises. But assuming as
@@ -32,7 +32,7 @@ for them to do:
 ```scala
 for {
   n <- newyork
-  m <- madrid
+  m <- chicago
 } {
   if (n > m) println("It's hotter in New York")
   else  println("It's at least as hot in Madrid")

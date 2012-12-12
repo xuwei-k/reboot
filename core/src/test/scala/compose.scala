@@ -2,6 +2,7 @@ package dispatch.spec
 
 import org.scalacheck._
 
+
 object ComposeSpecification
 extends Properties("Compose")
 with DispatchCleanup {
@@ -44,7 +45,7 @@ with DispatchCleanup {
 
   property("recursive sum") = forAll(numList) { (sample: List[Long]) =>
     @annotation.tailrec
-    def recur(nums: Iterable[Promise[String]]): Promise[String] = {
+    def recur(nums: Iterable[Future[String]]): Future[String] = {
       if (nums.size == 1) nums.head
       else recur(
         nums.grouped(2).map { twos =>
