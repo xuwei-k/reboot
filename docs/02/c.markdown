@@ -106,7 +106,7 @@ def temperature(loc: String):
   Promise[Either[String,Int]] = {
   for {
     xml <- weatherXml(loc).right
-    t <- Promise(extractTemp(xml)).right
+    t <- Futures(extractTemp(xml)).right
   } yield t
 ```
 
@@ -139,7 +139,7 @@ def hottest(locs: String*) = {
     for(loc <- locs)
       yield for (tEither <- temperature(loc))
         yield (loc, tEither)
-  for (ts <- Promise.all(temps)) yield {
+  for (ts <- Futures.all(temps)) yield {
     val valid = for ((loc, Right(t)) <- ts)
       yield (t, loc)
     val max = for (_ <- valid.headOption)
