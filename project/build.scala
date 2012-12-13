@@ -74,6 +74,7 @@ object Common {
     homepage :=
       Some(new java.net.URL("http://reboot.databinder.net/")),
 
+	  /*
     publishMavenStyle := true,
 
     publishTo <<= version { (v: String) =>
@@ -86,6 +87,7 @@ object Common {
 
     publishArtifact in Test := false,
 
+	*/
     licenses := Seq("LGPL v3" -> url("http://www.gnu.org/licenses/lgpl.txt")),
 
     pomExtra := (
