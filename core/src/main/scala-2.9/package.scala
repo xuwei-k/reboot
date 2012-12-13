@@ -1,7 +1,7 @@
 import com.ning.http.client.{AsyncHttpClient, AsyncHandler, Request}
 
 /** This will hold all the explicits **/
-package object dispatch {
+package object reboot{
 
   /** Type alias for RequestBuilder, our typical request definitions */
   type Req = com.ning.http.client.RequestBuilder
@@ -11,9 +11,9 @@ package object dispatch {
   type Uri = java.net.URI
 
   /** type alias for dispatch future/ scala future **/
-  type Future[+A] = dispatch.DispatchFuture[A]
+  type Future[+A] = reboot.DispatchFuture[A]
 
-  @deprecated("Use dispatch.HttpExecutor")
+  @deprecated("Use reboot.HttpExecutor")
   type Executor = HttpExecutor
 
   implicit def implyRequestVerbs(builder: Req) =

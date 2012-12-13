@@ -1,4 +1,4 @@
-package dispatch
+package reboot
 
 import concurrent.Future
 import scala.util.Failure

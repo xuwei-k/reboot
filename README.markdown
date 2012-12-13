@@ -6,7 +6,7 @@ HTTP interaction in Scala, using [async-http-client][async]
 as its underlying transport. For more info, see the
 [Dispatch documentation site][docs].
 
-[docs]: http://dispatch.databinder.net/Dispatch.html
+[docs]: http://reboot.databinder.net/Dispatch.html
 [async]: https://github.com/AsyncHttpClient/async-http-client
 
 ### Mailing List

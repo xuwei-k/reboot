@@ -1,6 +1,6 @@
 ### Retry on application-defined failure
 
-The new `dispatch.retry` package provides support for retrying
+The new `reboot.retry` package provides support for retrying
 requests that end in failure. Failure can be defined in terms of
 `Either` with a `Left`, `Option` with a `None`, or any
 `Success.predicate` defined by the application.

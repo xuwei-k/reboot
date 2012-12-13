@@ -18,11 +18,11 @@ documentation][doc].
 
 ### Documentation
 
-The project's main documentation site [dispatch.databinder.net][doc]
+The project's main documentation site [reboot.databinder.net][doc]
 is fully rewritten and the old documentation is relocated to the
 [dispatch-classic][classic] subdomain.
 
-[doc]: http://dispatch.databinder.net/
+[doc]: http://reboot.databinder.net/
 [classic]: http://dispatch-classic.databinder.net/Dispatch.html
 
 ### Extension modules

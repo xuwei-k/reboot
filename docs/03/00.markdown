@@ -21,7 +21,7 @@ Request definitions are initialized with a URL or domain name.
 
 The function `url` belongs to the `dispatch` package. It is typically
 imported by wildcard. If it becomes shadowed by a local `url` value,
-you can always refer to it as `dispatch.url`.
+you can always refer to it as `reboot.url`.
 
 ```scala
 def myRequest = url("http://example.com/some/path")

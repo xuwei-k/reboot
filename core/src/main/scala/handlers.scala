@@ -1,4 +1,4 @@
-package dispatch
+package reboot
 
 import com.ning.http.client
 import client.{
@@ -38,7 +38,7 @@ trait OkHandler[T] extends AsyncHandler[T] {
   }
 }
 
-@deprecated("use objects in dispatch.as package") object As {
+@deprecated("use objects in reboot.as package") object As {
   def apply[T](f: Response => T) = f
   val string = as.String
   val bytes = as.Bytes

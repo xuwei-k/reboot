@@ -1,6 +1,6 @@
-package dispatch.as.json4s.stream
+package reboot.as.json4s.stream
 
-import dispatch.stream.StringsByLine
+import reboot.stream.StringsByLine
 import org.json4s._
 import org.json4s.native.JsonMethods._
 

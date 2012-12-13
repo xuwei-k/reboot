@@ -1,11 +1,11 @@
-package dispatch.as.oauth
+package reboot.as.oauth
 
-import dispatch.oauth._
+import reboot.oauth._
 import com.ning.http.client.Response
 import com.ning.http.client.oauth._
 
 object Token extends (Response => Either[String, RequestToken]) {
-  def apply(res: Response) = tokenDecode(dispatch.as.String(res))
+  def apply(res: Response) = tokenDecode(reboot.as.String(res))
   private def decode(str: String) = java.net.URLDecoder.decode(str, "utf-8")
   private def formDecode(str: String) =
     (for (pair <- str.trim.split('&'))

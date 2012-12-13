@@ -1,15 +1,15 @@
-package dispatch.spec
+package reboot.spec
 
 import org.scalacheck._
 
 object ServerSpecification
-extends Properties("Server")
-with DispatchCleanup {
+  extends Properties("Server")
+  with DispatchCleanup {
   import Prop._
 
-  import dispatch._
+  import reboot._
 
-  val server = { 
+  val server = {
     import unfiltered.netty
     import unfiltered.response._
     import unfiltered.request._
@@ -17,36 +17,30 @@ with DispatchCleanup {
     object What extends Params.Extract("what", Params.first)
     object EchoHeader extends StringHeader("echo")
     netty.Http.anylocal.handler(netty.async.Planify {
-      unfiltered.kit.AsyncCycle.perfect {
-        case req @ Path("/echo") & Params(Echo(echo)) => {
-
-         val promise: Future[unfiltered.response.ResponseFunction[org.jboss.netty.handler.codec.http.HttpResponse]]
-         = Http.promise(PlainTextContent ~> ResponseString(echo))
-          PimpedFuture(promise)
+      case req @ Path("/echo") & Params(Echo(echo)) =>
+        req.respond(PlainTextContent ~> ResponseString(echo))
+      case req @ Path("/ask") & Params(Echo(echo) & What(what)) =>
+        for {
+          e <- Http(
+            localhost / what << Map("echo" -> echo) OK as.String
+          ).either
+        } {
+          req.respond(e.fold(
+            _ => InternalServerError ~> ResponseString("service error"),
+            str => PlainTextContent ~> ResponseString(str)
+          ))
         }
-        case req @ Path("/ask") & Params(Echo(echo) & What(what)) =>
-          for {
-            e <- Http(
-              localhost / what << Map("echo" -> echo) OK as.String
-            ).either
-          } yield {
-            e.fold(
-              _ => InternalServerError ~> ResponseString("service error"),
-              str => PlainTextContent ~> ResponseString(str)
-            )
-          }
-        case req @ Path("/ask") & Params(What(what)) & EchoHeader(echo) =>
-          for {
-            e <- Http(
-              localhost / what << Map("echo" -> echo) OK as.String
-            ).either
-          } yield {
-            e.fold(
-              _ => InternalServerError ~> ResponseString("service error"),
-              str => PlainTextContent ~> ResponseString(str)
-            )
-          }
-      }
+      case req @ Path("/ask") & Params(What(what)) & EchoHeader(echo) =>
+        for {
+          e <- Http(
+            localhost / what << Map("echo" -> echo) OK as.String
+          ).either
+        } {
+          req.respond(e.fold(
+            _ => InternalServerError ~> ResponseString("service error"),
+            str => PlainTextContent ~> ResponseString(str)
+          ))
+        }
     }).start()
   }
 
@@ -56,7 +50,7 @@ with DispatchCleanup {
     forAll(Gen.alphaStr) { sample =>
       val res: Future[String] = Http(
         localhost / "ask" << Map("what" -> "echo",
-                                 "echo" -> sample) > as.String
+          "echo" -> sample) > as.String
       )
       res() ?= sample
     }
@@ -74,7 +68,7 @@ with DispatchCleanup {
       (sample1, sample2) =>
         val res = Http(
           localhost / "ask" << Map("what" -> sample1,
-                                   "echo" -> sample2) OK as.String
+            "echo" -> sample2) OK as.String
         ).either
         res() ?= Left(StatusCode(500))
     }

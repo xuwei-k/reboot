@@ -1,8 +1,8 @@
-package dispatch.oauth
+package reboot.oauth
 
-import dispatch._
+import reboot._
 import com.ning.http.client.oauth._
 
-@deprecated("use dispatch.as.oauth.Token") object AsOAuth {
+@deprecated("use reboot.as.oauth.Token") object AsOAuth {
   val token = as.oauth.Token
 }

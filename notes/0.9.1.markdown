@@ -60,7 +60,7 @@ unexpected response statuses at the outset of response handling.
 Below is an example of sending a `key` header with a value of `value`
 to `host`
 
-    import dispatch._
+    import reboot._
     Http(url(host) <:< Map(key <- value) Ok as.String)
 
 [11]: https://github.com/dispatch/reboot/pull/11

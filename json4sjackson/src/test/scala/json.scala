@@ -1,4 +1,4 @@
-package dispatch.spec
+package reboot.spec
 
 import org.scalacheck._
 
@@ -34,7 +34,7 @@ with DispatchCleanup {
     }).start()
   }
 
-  import dispatch._
+  import reboot._
 
   def localhost = host("127.0.0.1", server.port)
 

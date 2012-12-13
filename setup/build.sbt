@@ -10,7 +10,7 @@ organization := "net.databinder.dispatch"
 seq(lsSettings :_*)
 
 homepage :=
-  Some(new java.net.URL("http://dispatch.databinder.net/"))
+  Some(new java.net.URL("http://reboot.databinder.net/"))
 
 publishMavenStyle := true
 

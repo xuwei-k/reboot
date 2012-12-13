@@ -1,6 +1,6 @@
-package dispatch.oauth
+package reboot.oauth
 /*
-import dispatch._
+import reboot._
 
 import com.ning.http.client.oauth._
 

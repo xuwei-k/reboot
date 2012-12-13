@@ -3,7 +3,7 @@
   "name" : "lift-json",
   "version" : "0.9.1",
   "description" : "Dispatch module providing lift json support",
-  "site" : "http://dispatch.databinder.net/",
+  "site" : "http://reboot.databinder.net/",
   "tags" : [ ],
   "docs" : "",
   "resolvers" : [ "https://oss.sonatype.org/content/repositories/releases" ],

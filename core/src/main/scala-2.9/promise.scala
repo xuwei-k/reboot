@@ -1,4 +1,4 @@
-package dispatch
+package reboot
 
 import com.ning.http.client.ListenableFuture
 import java.util.{concurrent => juc}
@@ -69,7 +69,7 @@ trait DispatchFuture[+A] extends PromiseSIP[A] { self =>
   protected lazy val result = allCatch.either { claim }
 
   /** Listener to be called in an executor when promise is available */
-  protected [dispatch] def addListener(f: () => Unit)
+  protected [reboot] def addListener(f: () => Unit)
 
   // lazily assign result when available, e.g. to evaluate mapped function
   // that may kick off further promises

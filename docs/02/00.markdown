@@ -12,7 +12,7 @@ in playing around with the previous examples. Here we'll make a big
 mess to see happens, and how bad it can get.
 
 ```scala
-import dispatch._
+import reboot._
 val str = Http(host("example.com") OK as.String)
 ```
 
@@ -20,7 +20,7 @@ So far, so good? We've made a request that will fail the *OK* test
 with a redirect status code, but it hasn't completed yet so we don't
 know that it failed:
 
-    str: dispatch.Promise[String] = Promise(-incomplete-)
+    str: reboot.Promise[String] = Promise(-incomplete-)
 
 ### Promise#toString for broken promises
 
@@ -28,7 +28,7 @@ If we have the console print its string representation a moment later,
 we'll get a different result:
 
     scala> str
-    res0: dispatch.Promise[String] = Promise(!Unexpected response status: 302!)
+    res0: reboot.Promise[String] = Promise(!Unexpected response status: 302!)
 
 ### Applying broken promises
 
@@ -36,9 +36,9 @@ But we still have a promise of string. So what happens if we demand
 the string?
 
     scala> str()
-    dispatch.StatusCode: Unexpected response status: 302
-        at dispatch.OkHandler\$class.onStatusReceived(handlers.scala:37)
-        at dispatch.OkFunctionHandler.onStatusReceived(handlers.scala:29)
+    reboot.StatusCode: Unexpected response status: 302
+        at reboot.OkHandler\$class.onStatusReceived(handlers.scala:37)
+        at reboot.OkFunctionHandler.onStatusReceived(handlers.scala:29)
         ...
 
 The exception was thrown in the thread that demanded the value, since
@@ -49,7 +49,7 @@ there is no way to supply it.
 Broken promises carry their exceptions through transformations:
 
     scala> for (s <- str) yield s.length
-    res7: dispatch.Promise[Int] = Promise(!Unexpected response status: 302!)
+    res7: reboot.Promise[Int] = Promise(!Unexpected response status: 302!)
 
 Applying it would yield the same result as before.
 
@@ -61,7 +61,7 @@ will be thrown into the background thread assigned to it.
     scala> for (s <- str) println(s)
 
     scala> [error] (AsyncHttpClient-Callback) java.lang.Error: 
-      java.util.concurrent.ExecutionException: dispatch.StatusCode:
+      java.util.concurrent.ExecutionException: reboot.StatusCode:
       Unexpected response status: 302
       ...
 

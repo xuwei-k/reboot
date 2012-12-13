@@ -3,7 +3,7 @@
   "name" : "core",
   "version" : "0.9.1",
   "description" : "Core Dispatch module wrapping sonatype/async-http-client",
-  "site" : "http://dispatch.databinder.net/",
+  "site" : "http://reboot.databinder.net/",
   "tags" : [ ],
   "docs" : "",
   "resolvers" : [ "https://oss.sonatype.org/content/repositories/releases" ],

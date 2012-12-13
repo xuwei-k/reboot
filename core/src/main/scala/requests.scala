@@ -1,4 +1,4 @@
-package dispatch
+package reboot
 
 import com.ning.http.client.RequestBuilder
 

@@ -1,4 +1,4 @@
-package dispatch.as.tagsoup
+package reboot.as.tagsoup
 
 import com.ning.http.client.Response
 import xml.{NodeSeq => XNodeSeq}

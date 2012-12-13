@@ -1,8 +1,8 @@
-package dispatch.oauth
+package reboot.oauth
 
 import com.ning.http.client.oauth._
 
-import dispatch._
+import reboot._
 
 class SigningVerbs(val subject: Req) extends RequestVerbs {
   val emptyToken = new RequestToken("", "")

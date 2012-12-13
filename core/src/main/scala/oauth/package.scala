@@ -1,4 +1,4 @@
-package dispatch
+package reboot
 
 package object oauth {
   implicit def implySigningVerbs(builder: Req) =
