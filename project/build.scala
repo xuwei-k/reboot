@@ -8,10 +8,7 @@ object Builds extends sbt.Build {
     "dispatch-all", file("."), settings =
       Defaults.defaultSettings ++ Common.settings ++ Seq(
         ls.Plugin.LsKeys.skipWrite := true,
-        publish := { },
-		scalaVersion := 2.9.2,
-		reubenDispatch := "2.10"
-      )
+        publish := { })
   ).aggregate(core, liftjson, jsoup, tagsoup, json4sJackson, json4sNative)
 
   def module(name: String) =
@@ -19,7 +16,12 @@ object Builds extends sbt.Build {
       file(name.replace("-", "")),
       settings = Defaults.defaultSettings ++
         Common.settings ++
-        Common.testSettings)
+        Common.testSettings ++
+		Seq(
+			scalaVersion := "2.9.2",
+			scalaBinaryVersion := "2.9.2"
+			)
+		)
       .dependsOn(ufcheck % "test->test")
 
   lazy val core = module("core")
