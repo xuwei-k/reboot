@@ -8,7 +8,9 @@ object Builds extends sbt.Build {
     "dispatch-all", file("."), settings =
       Defaults.defaultSettings ++ Common.settings ++ Seq(
         ls.Plugin.LsKeys.skipWrite := true,
-        publish := { }
+        publish := { },
+		scalaVersion := 2.9.2,
+		reubenDispatch := "2.10"
       )
   ).aggregate(core, liftjson, jsoup, tagsoup, json4sJackson, json4sNative)
 
@@ -67,7 +69,7 @@ object Common {
     version := "0.9.4-Future",
 
     crossScalaVersions :=
-      Seq("2.8.1", "2.8.2", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2", "2.10.0-RC5"),
+      Seq("2.8.1", "2.8.2", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2"/*, "2.10.0-RC5"*/),
 
     organization := "net.databinder.dispatch",
 
