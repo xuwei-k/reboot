@@ -8,7 +8,10 @@ object Builds extends sbt.Build {
     "dispatch-all", file("."), settings =
       Defaults.defaultSettings ++ Common.settings ++ Seq(
         ls.Plugin.LsKeys.skipWrite := true,
-        publish := { })
+        publish := { },
+		scalaVersion := "2.9.2",
+		scalaBinaryVersion := "2.9.2"
+		)
   ).aggregate(core, liftjson, jsoup, tagsoup, json4sJackson, json4sNative)
 
   def module(name: String) =
