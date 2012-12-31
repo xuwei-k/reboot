@@ -16,6 +16,10 @@ object Common {
     crossScalaVersions :=
       Seq("2.8.1", "2.8.2", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2"),
 
+    scalaVersion := "2.9.2",
+
+    scalaBinaryVersion := "2.9.2",
+
     organization := "net.databinder.dispatch",
 
     homepage :=
