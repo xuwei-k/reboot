@@ -9,9 +9,9 @@ object Builds extends sbt.Build {
       Defaults.defaultSettings ++ Common.settings ++ Seq(
         ls.Plugin.LsKeys.skipWrite := true,
         publish := { },
-		scalaVersion := "2.9.2",
-		scalaBinaryVersion := "2.9.2"
-		)
+        scalaVersion := "2.9.2",
+        scalaBinaryVersion := "2.9.2"
+        )
   ).aggregate(core, liftjson, jsoup, tagsoup, json4sJackson, json4sNative)
 
   def module(name: String) =
@@ -20,11 +20,11 @@ object Builds extends sbt.Build {
       settings = Defaults.defaultSettings ++
         Common.settings ++
         Common.testSettings ++
-		Seq(
-			scalaVersion := "2.9.2",
-			scalaBinaryVersion := "2.9.2"
-			)
-		)
+        Seq(
+            scalaVersion := "2.9.2",
+            scalaBinaryVersion := "2.9.2"
+            )
+        )
       .dependsOn(ufcheck % "test->test")
 
   lazy val core = module("core")
