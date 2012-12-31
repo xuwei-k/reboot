@@ -10,13 +10,7 @@ unmanagedSourceDirectories in Compile <++= (scalaBinaryVersion, baseDirectory) {
 description :=
   "Core Dispatch module wrapping sonatype/async-http-client"
 
-libraryDependencies <++= (scalaBinaryVersion) { (sv) =>
-  "com.ning" % "async-http-client" % "1.7.5" :: (
-    sv match {
-      case "2.10" => "com.typesafe.akka" % "akka-actor" % "2.0.3" :: Nil
-      case _ => Nil
-    }
-  )
-}
+libraryDependencies +=
+  "com.ning" % "async-http-client" % "1.7.5"
 
 seq(lsSettings :_*)

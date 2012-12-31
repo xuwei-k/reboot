@@ -18,8 +18,6 @@ object Common {
 
     scalaVersion := "2.9.2",
 
-    scalaBinaryVersion := "2.9.2",
-
     organization := "net.databinder.dispatch",
 
     homepage :=
