@@ -1,6 +1,6 @@
-package reboot.as.xml
+package dispatch.as.xml
 
-import reboot._
+import dispatch._
 import scala.xml._
 
 object Elem extends (Res => scala.xml.Elem) {

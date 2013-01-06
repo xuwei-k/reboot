@@ -1,8 +1,8 @@
-package reboot.retry
+package dispatch.retry
 /*
 import java.util.concurrent.TimeUnit
 
-import reboot._
+import dispatch._
 
 /** Retry immediately after failure */
 object Directly extends CountingRetry {

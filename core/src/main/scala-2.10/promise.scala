@@ -1,4 +1,4 @@
-package reboot
+package dispatch
 
 import com.ning.http.client.ListenableFuture
 import java.util.{concurrent => juc}

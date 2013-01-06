@@ -1,4 +1,4 @@
-package reboot.spec
+package dispatch.spec
 
 import org.scalacheck._
 
@@ -7,7 +7,7 @@ object ServerSpecification
   with DispatchCleanup {
   import Prop._
 
-  import reboot._
+  import dispatch._
 
   val server = {
     import unfiltered.netty

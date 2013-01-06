@@ -1,4 +1,4 @@
-package reboot
+package dispatch
 
 import com.ning.http.client
 import client.{

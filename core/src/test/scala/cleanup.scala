@@ -1,8 +1,8 @@
-package reboot.spec
+package dispatch.spec
 
 trait DispatchCleanup extends unfiltered.spec.ServerCleanup {
   override def cleanup() {
     super.cleanup()
-    reboot.Http.shutdown()
+    dispatch.Http.shutdown()
   }
 }

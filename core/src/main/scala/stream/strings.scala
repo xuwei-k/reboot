@@ -1,4 +1,4 @@
-package reboot.stream
+package dispatch.stream
 
 import com.ning.http.client._
 import com.ning.http.util.AsyncHttpProviderUtils.parseCharset

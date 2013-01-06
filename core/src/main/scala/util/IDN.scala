@@ -1,4 +1,4 @@
-package reboot
+package dispatch
 
 import java.net.IDN
 import java.lang.IllegalArgumentException

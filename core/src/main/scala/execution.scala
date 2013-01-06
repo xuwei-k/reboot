@@ -1,4 +1,4 @@
-package reboot
+package dispatch
 
 import com.ning.http.client.{
 AsyncHttpClient, RequestBuilder, Request, Response, AsyncHandler,
@@ -44,7 +44,7 @@ object Http extends Http(
   Defaults.timer
 )
 
-private [reboot] object Defaults {
+private [dispatch] object Defaults {
   lazy val client = new AsyncHttpClient(config)
   lazy val timeout = Duration.None
   lazy val config = new AsyncHttpClientConfig.Builder()
@@ -78,7 +78,7 @@ trait HttpExecutor { self =>
   requestHandlerToFuture(request, handler, this)
 
 
-  lazy val promise: reboot.Futures.Factory = new reboot.Futures.Factory(self)
+  lazy val promise: dispatch.Futures.Factory = new dispatch.Futures.Factory(self)
 
   def shutdown() {
     client.close()

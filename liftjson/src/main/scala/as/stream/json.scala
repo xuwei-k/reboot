@@ -1,6 +1,6 @@
-package reboot.as.lift.stream
+package dispatch.as.lift.stream
 
-import reboot.stream.StringsByLine
+import dispatch.stream.StringsByLine
 import net.liftweb.json.{ JsonParser, JValue }
 
 object Json {

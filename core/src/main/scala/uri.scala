@@ -1,4 +1,4 @@
-package reboot
+package dispatch
 
 /** URI representation with raw parts, so  */
 case class RawUri(

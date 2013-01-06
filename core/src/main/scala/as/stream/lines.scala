@@ -1,6 +1,6 @@
-package reboot.as.stream
+package dispatch.as.stream
 
-import reboot._
+import dispatch._
 
 import com.ning.http.client._
 

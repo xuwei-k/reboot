@@ -2,7 +2,7 @@ import com.ning.http.client.{ListenableFuture, AsyncHttpClient, AsyncHandler, Re
 import scala.concurrent.Promise
 import scala.util.{Failure, Success}
 
-package object reboot {
+package object dispatch {
   /** Type alias for RequestBuilder, our typical request definitions */
   type Req = com.ning.http.client.RequestBuilder
   /** Type alias for Response, avoid need to import */
@@ -13,7 +13,7 @@ package object reboot {
   /** type alias for dispatch future/ scala future **/
   type Future[+A] = scala.concurrent.Future[A]
 
-  @deprecated("Use reboot.HttpExecutor")
+  @deprecated("Use dispatch.HttpExecutor")
   type Executor = HttpExecutor
 
   implicit val exec = scala.concurrent.ExecutionContext.Implicits.global
