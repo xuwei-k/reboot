@@ -24,6 +24,11 @@ object PromiseEither {
     def foreach[U](f: A => U) {
       underlying.addListener { () => underlying().left.foreach(f) }
     }
+    def filter[X](p: A => Boolean): Promise[Option[Either[A,X]]] =
+      new EitherDelegate(underlying) with Promise[Option[Either[A,X]]] {
+        def claim = underlying().left.filter(p)
+        def replay = self.replay.filter(p)
+      }
   }
   class RightProjection[+A,+B](underlying: Promise[Either[A,B]]) { self =>
     private def replay = new RightProjection(underlying.replay)
@@ -41,6 +46,11 @@ object PromiseEither {
     def foreach(f: B => Unit) {
       underlying.addListener { () => underlying().right.foreach(f) }
     }
+    def filter[X](p: B => Boolean): Promise[Option[Either[X,B]]] =
+      new EitherDelegate(underlying) with Promise[Option[Either[X,B]]] {
+        def claim = underlying().right.filter(p)
+        def replay = self.replay.filter(p)
+      }
     def values[A1 >: A, C]
     (implicit ev: RightProjection[A, B] <:<
                   RightProjection[A1, Iterable[C]]) =
