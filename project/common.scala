@@ -11,10 +11,12 @@ object Common {
   )
 
   val settings: Seq[Setting[_]] = ls.Plugin.lsSettings ++ Seq(
-    version := "0.9.5",
+    version := "0.9.6-SNAPSHOT",
+
+    scalaVersion := "2.10.0",
 
     crossScalaVersions :=
-      Seq("2.8.1", "2.8.2", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2"),
+      Seq("2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2", "2.10.0"),
 
     organization := "net.databinder.dispatch",
 

@@ -8,7 +8,8 @@ object Builds extends sbt.Build {
     "dispatch-all", file("."), settings =
       Defaults.defaultSettings ++ Common.settings ++ Seq(
         ls.Plugin.LsKeys.skipWrite := true,
-      publish := { }
+        scalaVersion := "2.10.0",
+        publish := { }
       )
     ).aggregate(core, liftjson, jsoup, tagsoup, json4sJackson, json4sNative)
 
@@ -42,14 +43,10 @@ object Builds extends sbt.Build {
     .dependsOn(core)
     .dependsOn(core % "test->test")
     
-  /** Util module for using unfiltered with scalacheck */
-  lazy val ufcheck = Project(
-    "ufcheck", file("ufcheck")
-  ).dependsOn(scalacheck % "test->compile")
-
-  lazy val scalacheck = RootProject(
-    uri("git://github.com/n8han/scalacheck.git#3aad8be")
+  /** Util module for using unfiltered with scalacheck  */
+  lazy val ufcheck = Project("ufcheck",file("ufcheck")).settings(
+    Common.settings : _*
   )
-}
 
+}
 
