@@ -6,16 +6,25 @@ object Common {
   val defaultScalaVersion = "2.10.4"
 
   val testSettings:Seq[Setting[_]] = Seq(
-    testOptions in Test += Tests.Cleanup { loader =>
-      val c = loader.loadClass("unfiltered.spec.Cleanup$")
-      c.getMethod("cleanup").invoke(c.getField("MODULE$").get(c))
+    testOptions in Test ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, v)) if v < 12 =>
+          Seq(
+            Tests.Cleanup { loader =>
+              val c = loader.loadClass("unfiltered.spec.Cleanup$")
+              c.getMethod("cleanup").invoke(c.getField("MODULE$").get(c))
+            }
+          )
+        case _ =>
+          Nil
+      }
     }
   )
 
   val settings: Seq[Setting[_]] = ls.Plugin.lsSettings ++ Seq(
     version := "0.11.2",
 
-    crossScalaVersions := Seq("2.9.3", "2.10.4", "2.11.5"),
+    crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.0"),
 
     scalaVersion := defaultScalaVersion,
 

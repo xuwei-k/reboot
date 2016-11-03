@@ -10,7 +10,7 @@ object Builds extends sbt.Build {
         ls.Plugin.LsKeys.skipWrite := true,
       publish := { }
       )
-    ).aggregate(core, jsoup, tagsoup, // liftjson - no 2.11 artifact
+    ).aggregate(core, jsoup, tagsoup, // liftjson - no 2.12 artifact
       json4sJackson, json4sNative)
 
   def module(name: String, settings: Seq[Def.Setting[_]] = Seq.empty) =
@@ -44,17 +44,19 @@ object Builds extends sbt.Build {
     .dependsOn(core)
     .dependsOn(core % "test->test")
     
-  lazy val xmlDependency = libraryDependencies <<= (libraryDependencies, scalaVersion){
-    (dependencies, scalaVersion) =>
-      if(scalaVersion.startsWith("2.11"))
-        ("org.scala-lang.modules" %% "scala-xml" % "1.0.1") +: dependencies
-      else
-        dependencies
+  lazy val xmlDependency = libraryDependencies ++= {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, v)) if v >= 11 =>
+        Seq("org.scala-lang.modules" %% "scala-xml" % "1.0.6")
+      case _ =>
+        Nil
     }
+  }
 
   /** Util module for using unfiltered with scalacheck */
   lazy val ufcheck = Project(
-    "ufcheck", file("ufcheck"), settings =
-      Defaults.defaultSettings ++ Seq(scalaVersion := Common.defaultScalaVersion)
+    "ufcheck", file("ufcheck")
+  ).settings(
+    scalaVersion := Common.defaultScalaVersion
   )
 }
